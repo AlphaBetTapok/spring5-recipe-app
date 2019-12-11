@@ -1,5 +1,7 @@
 package com.taranenkoant.service;
 
+import com.taranenkoant.converters.RecipeCommandToRecipe;
+import com.taranenkoant.converters.RecipeToRecipeCommand;
 import com.taranenkoant.domain.Recipe;
 import com.taranenkoant.repositories.RecipeRepository;
 import org.junit.Before;
@@ -21,10 +23,16 @@ public class RecipeServiceImplTest {
     @Mock
     RecipeRepository recipeRepository;
 
+    @Mock
+    RecipeToRecipeCommand recipeToRecipeCommand;
+
+    @Mock
+    RecipeCommandToRecipe recipeCommandToRecipe;
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        recipeService = new RecipeServiceImpl(recipeRepository);
+        recipeService = new RecipeServiceImpl(recipeRepository, recipeCommandToRecipe, recipeToRecipeCommand);
     }
 
     @Test
@@ -49,7 +57,7 @@ public class RecipeServiceImplTest {
         when(recipeRepository.findAll()).thenReturn(recipesData);
         Set<Recipe> recipies = recipeService.getRecipes();
         assertEquals(recipies.size(), 1);
-
         verify(recipeRepository, times(1)).findAll();
+        verify(recipeRepository, never()).findById(anyLong());
     }
 }
